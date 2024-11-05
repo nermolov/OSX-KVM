@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env fish
 
 # start system if not already booted
 virsh -c qemu:///system start macOS
