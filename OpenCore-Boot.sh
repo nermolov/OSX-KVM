@@ -31,6 +31,9 @@ CPU_THREADS="4"
 REPO_PATH="."
 OVMF_DIR="."
 
+MACHINE_NAME="${1:-omnifocus}"
+BASE_PATH="$HOME/playground/machines/qemu/$MACHINE_NAME"
+
 # shellcheck disable=SC2054
 args=(
   -enable-kvm -m "$ALLOCATED_RAM" -cpu Haswell-noTSX,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,"$MY_OPTIONS"
@@ -50,7 +53,7 @@ args=(
   -drive if=pflash,format=raw,readonly=on,file="/usr/share/edk2/ovmf/OVMF_CODE.fd"
   # a writeable copy of the system template has to be created: `cp /usr/share/edk2/ovmf/OVMF_VARS.fd OVMF_VARS.fd`
   # actually turns out the file included in this repo is identical to what is from the fedora repos
-  -drive if=pflash,format=raw,file="$REPO_PATH/$OVMF_DIR/OVMF_VARS.fd"
+  -drive if=pflash,format=raw,file="$BASE_PATH/OVMF_VARS.fd"
   -smbios type=2
   -device ich9-intel-hda -device hda-duplex
   -device ich9-ahci,id=sata
@@ -58,7 +61,7 @@ args=(
   -device ide-hd,bus=sata.2,drive=OpenCoreBoot
   -device ide-hd,bus=sata.3,drive=InstallMedia
   -drive id=InstallMedia,if=none,file="$REPO_PATH/BaseSystem.img",format=raw
-  -drive id=MacHDD,if=none,file="$HOME/playground/machines/mac_hdd_ng.img",format=raw
+  -drive id=MacHDD,if=none,file="$BASE_PATH/mac_hdd_ng.img",format=raw
   -device ide-hd,bus=sata.4,drive=MacHDD
   # -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -device virtio-net-pci,netdev=net0,id=net0,mac=52:54:00:c9:18:27
   -netdev user,id=net0,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=net0,id=net0,mac=52:54:00:c9:18:27
